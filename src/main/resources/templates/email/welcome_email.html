@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+<span>Welcome </span><span th:text="${name}"></span><span>!</span>
+<p>Click the link below to complete your registration.</p>
+<div>
+    <!--/*@thymesVar id="uuid" type=""*/-->
+    <a target='_blank' th:href="@{http://localhost:8080/member/email-auth(id=${uuid})}">Email Authentication</a>
+</div>
+</body>
+</html>

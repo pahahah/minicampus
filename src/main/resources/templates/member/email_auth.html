@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title> Member Activate </title>
+</head>
+<body>
+
+<h1>Member Activate</h1>
+
+
+<div th:if="${result eq true}">
+    <p>Your account has been activated.</p>
+</div>
+
+<div th:if="${result eq false}">
+    <p>Failed to activate your account.</p>
+</div>
+
+
+</body>
+</html>
