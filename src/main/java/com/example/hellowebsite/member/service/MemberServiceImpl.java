@@ -5,7 +5,7 @@ import com.example.hellowebsite.member.MemberNotEmailAuthException;
 import com.example.hellowebsite.member.entity.Email;
 import com.example.hellowebsite.member.entity.Member;
 import com.example.hellowebsite.member.model.MemberInput;
-import com.example.hellowebsite.member.model.ResetPasswordInput;
+import com.example.hellowebsite.member.model.ResetPasswordRequest;
 import com.example.hellowebsite.member.repository.EmailRepository;
 import com.example.hellowebsite.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,17 +56,12 @@ public class MemberServiceImpl implements MemberService{
 
         String emailId = "emailAuth";
         Optional<Email> optionalEmail = emailRepository.findById(emailId);
-        Email eMail;
-        if (optionalEmail.isPresent()){
-            eMail = optionalEmail.get();
-        }else {
-            throw new NullPointerException("There is no email data.");
-        }
+        Email email = optionalEmail.get();
 
         String mail = parameter.getUserId();
         String userName = parameter.getUserName();
 
-        mailComponents.sendMail(mail, userName, uuid, eMail);
+        mailComponents.sendMail(mail, userName, uuid, email);
 
 
         return true;
@@ -91,7 +86,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public boolean sendResetPassword(ResetPasswordInput parameter) {
+    public boolean sendResetPassword(ResetPasswordRequest parameter) {
         Optional<Member> optionalMember = memberRepository.findByUserIdAndUserName(parameter.getUserId(), parameter.getUserName());
         if (!optionalMember.isPresent()) {
             throw new UsernameNotFoundException("Member information does not exist.");
@@ -108,19 +103,54 @@ public class MemberServiceImpl implements MemberService{
 
         String emailId = "resetPassword";
         Optional<Email> optionalEmail = emailRepository.findById(emailId);
-        Email email;
-        if (optionalEmail.isPresent()){
-            email = optionalEmail.get();
-        }else {
-            throw new NullPointerException("There is no password reset guide email data.");
-        }
+        Email email = optionalEmail.get();
 
         String mail = parameter.getUserId();
 
         String userName = parameter.getUserName();
         mailComponents.sendMail(mail, userName ,uuid, email);
 
-        return false;
+        return true;
+    }
+
+    @Override
+    public boolean resetPassword(String uuid, String password) {
+        Optional<Member> optionalMember = memberRepository.findByResetPasswordKey(uuid);
+        if(!optionalMember.isPresent()){
+            throw new UsernameNotFoundException("No such a user");
+        }
+        Member member = optionalMember.get();
+        //초기화날짜 체크
+        if (member.getResetPasswordLimitDt() == null){
+            throw new RuntimeException("Password reset timed out.");
+        }
+        if(member.getResetPasswordLimitDt().isBefore(LocalDateTime.now())){
+            throw new RuntimeException("Password reset timed out.");
+        }
+        String encPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        member.setPassword(encPassword);
+        member.setResetPasswordKey("");
+        member.setResetPasswordLimitDt(null);
+        memberRepository.save(member);
+        return true;
+    }
+
+    @Override
+    public boolean checkResetPassword(String uuid) {
+        Optional<Member> optionalMember = memberRepository.findByResetPasswordKey(uuid);
+        if(!optionalMember.isPresent()){
+            return false;
+        }
+        Member member = optionalMember.get();
+
+        if (member.getResetPasswordLimitDt() == null){
+            throw new RuntimeException("Password reset timed out.");
+        }
+        if(member.getResetPasswordLimitDt().isBefore(LocalDateTime.now())){
+            throw new RuntimeException("Password reset timed out.");
+        }
+
+        return true;
     }
 
 

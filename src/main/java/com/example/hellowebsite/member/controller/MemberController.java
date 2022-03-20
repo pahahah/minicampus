@@ -1,7 +1,7 @@
 package com.example.hellowebsite.member.controller;
 
 import com.example.hellowebsite.member.model.MemberInput;
-import com.example.hellowebsite.member.model.ResetPasswordInput;
+import com.example.hellowebsite.member.model.ResetPasswordRequest;
 import com.example.hellowebsite.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -61,11 +61,40 @@ public class MemberController {
     }
 
     @PostMapping("/member/reset-password")
-    public String resetPasswordSubmit(Model model, ResetPasswordInput parameter) {
-        boolean result = memberService.sendResetPassword(parameter);
+    public String resetPasswordSubmit(Model model, ResetPasswordRequest parameter) {
+        boolean result = false;
+        try {
+            result = memberService.sendResetPassword(parameter);
+        }catch (Exception e){
+
+        }
+
         model.addAttribute("result", result);
         return "member/reset_password_result";
     }
+
+    @GetMapping("/member/new-password")
+    public String newPassword(Model model, HttpServletRequest request) {
+        String uuid = request.getParameter("id");
+        boolean result = memberService.checkResetPassword(uuid);
+        model.addAttribute("result", result);
+        return "member/new_password";
+    }
+
+    @PostMapping("/member/new-password")
+    public String newPasswordSubmit(Model model, ResetPasswordRequest parameter){
+        boolean result = false;
+        try {
+            result = memberService.resetPassword(parameter.getId(), parameter.getPassword());
+        }catch (Exception e){
+        }
+
+        model.addAttribute("result", result);
+
+        return "member/new_password_result";
+    }
+
+
 
 
 
