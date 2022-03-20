@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3306/minicampus1
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: minicampus1_user
+    password: a1234
+
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
