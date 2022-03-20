@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Login</title>
+</head>
+<body>
+    <h1>User Login</h1>
+    <div th:text="${errorMessage}"></div>
+    <form method="post">
+        <div>
+            <input type="text" name="username" placeholder="ID(Email)" required/>
+        </div>
+        <div>
+            <input type="password" name="password" placeholder="password" required/>
+        </div>
+        <div>
+            <button type="submit">login</button>
+        </div>
+        <div>
+            <a href="/member/reset-password">Find password</a>
+        </div>
+    </form>
+</body>
+</html>

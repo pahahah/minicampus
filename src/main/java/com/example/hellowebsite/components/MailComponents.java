@@ -1,6 +1,6 @@
 package com.example.hellowebsite.components;
 
-import com.example.hellowebsite.member.entity.EMail;
+import com.example.hellowebsite.member.entity.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -22,7 +22,7 @@ public class MailComponents {
     @Autowired
     private TemplateEngine htmlTemplateEngine;
 
-    public boolean sendMail (String mail, String userName, String uuid, EMail eMail){
+    public boolean sendMail (String mail, String userName, String uuid, Email email){
         boolean result = false;
 
         Map<String, Object> variables = new HashMap<>();
@@ -32,8 +32,8 @@ public class MailComponents {
         Context context = new Context();
         context.setVariables(variables);
 
-        String subject = eMail.getEmailSubject();
-        String text = htmlTemplateEngine.process(eMail.getEmailText(), context);
+        String subject = email.getEmailSubject();
+        String text = htmlTemplateEngine.process(email.getEmailText(), context);
 
         MimeMessagePreparator msg = new MimeMessagePreparator() {
             @Override

@@ -1,5 +1,6 @@
-package com.example.hellowebsite;
+package com.example.hellowebsite.configuration;
 
+import com.example.hellowebsite.HelloWebsiteApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
