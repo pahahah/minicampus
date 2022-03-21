@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Page</title>
+    <style>
+        .detail table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .detail table th, .detail table td {
+            border:solid 1px #000;
+        }
+
+    </style>
+</head>
+<body>
+<h1>Admin member manage - member detail</h1>
+<div th:replace="/fragments/layout.html :: fragment-admin-body-menu"></div>
+
+
+<div class="detail" >
+
+    <table>
+        <tbody>
+        <tr>
+            <th>Id</th>
+            <td>
+                <p th:text="${member.userId}"></p>
+            </td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td>
+                <p th:text="${member.userName}"></p>
+            </td>
+        </tr>
+        <tr>
+            <th>Phone</th>
+            <td>
+                <p th:text="${member.phone}"></p>
+            </td>
+        </tr>
+        <tr>
+            <th>Reg Date</th>
+            <td>
+                <p th:text="${member.regDt}"></p>
+            </td>
+        </tr>
+        <tr>
+            <th>Email Auth Yn</th>
+            <td>
+                <p th:text="${member.emailAuthYn}"></p>
+            </td>
+        </tr>
+        <tr>
+            <th>Admin Yn</th>
+            <td>
+                <p th:text="${member.adminYn}"></p>
+            </td>
+        </tr>
+        <tr>
+            <th>Status</th>
+            <td>
+                <p>
+                    current status: <span th:text="${member.userStatus}"></span>
+                </p>
+                <div>
+                    <form method="post" action="/admin/member/status.do">
+                        <input th:value="${member.userId}" type="hidden" name="userId"/>
+                        <select name="userStatus">
+                            <option value="REQ">Requesting subscription</option>
+                            <option value="ING">in normal use</option>
+                            <option value="STOP">suspended</option>
+                        </select>
+                        <button type="submit">change status</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+
+        <tr>
+            <th>Password Reset</th>
+            <td>
+                <div>
+                    <form method="post" action="/admin/member/password.do">
+                        <input th:value="${member.userId}" type="hidden" name="userId"/>
+                        <input type="text" name="password"/>
+                        <button type="submit">reset password</button>
+                    </form>
+                </div>
+            </td>
+        </tr>
+
+
+        </tbody>
+    </table>
+
+    <div>
+        <a href="list.do"> List </a>
+
+    </div>
+
+
+</div>
+
+
+</body>
+</html>

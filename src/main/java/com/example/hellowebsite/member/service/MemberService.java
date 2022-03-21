@@ -47,4 +47,15 @@ public interface MemberService extends UserDetailsService {
      * @return Member list (only in admin)
      */
     List<MemberDto> list(MemberParam parameter);
+
+    /**
+     *
+     * @param userId
+     * @return member detail
+     */
+    MemberDto detail(String userId);
+
+    boolean updateStatus(String userId, String userStatus);
+
+    boolean updatePassword(String userId, String password);
 }

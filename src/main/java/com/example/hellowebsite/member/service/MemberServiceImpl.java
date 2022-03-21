@@ -7,6 +7,8 @@ import com.example.hellowebsite.components.MailComponents;
 import com.example.hellowebsite.member.MemberNotEmailAuthException;
 import com.example.hellowebsite.member.entity.Email;
 import com.example.hellowebsite.member.entity.Member;
+import com.example.hellowebsite.member.entity.MemberCode;
+import com.example.hellowebsite.member.exception.MemberStopUserException;
 import com.example.hellowebsite.member.model.MemberInput;
 import com.example.hellowebsite.member.model.ResetPasswordRequest;
 import com.example.hellowebsite.member.repository.EmailRepository;
@@ -55,7 +57,7 @@ public class MemberServiceImpl implements MemberService{
                 .regDt(LocalDateTime.now())
                 .emailAuthKey(uuid)
                 .emailAuthYn(false)
-
+                .userStatus(Member.MEMBER_STATUS_REQ)
                 .build();
 
         memberRepository.save(member);
@@ -87,6 +89,7 @@ public class MemberServiceImpl implements MemberService{
 
         member.setEmailAuthYn(true);
         member.setEmailAuthDt(LocalDateTime.now());
+        member.setUserStatus(MemberCode.MEMBER_STATUS_ING);
         memberRepository.save(member);
 
         return true;
@@ -178,6 +181,44 @@ public class MemberServiceImpl implements MemberService{
         return list;
     }
 
+    @Override
+    public MemberDto detail(String userId) {
+        Optional<Member> optionalMember = memberRepository.findById(userId);
+        if (!optionalMember.isPresent()){
+            return null;
+        }
+        Member member = optionalMember.get();
+
+        return MemberDto.of(member);
+    }
+
+    @Override
+    public boolean updateStatus(String userId, String userStatus) {
+        Optional<Member> optionalMember = memberRepository.findById(userId);
+        if(!optionalMember.isPresent()){
+            throw new UsernameNotFoundException("No such a user");
+        }
+
+        Member member = optionalMember.get();
+        member.setUserStatus(userStatus);
+        memberRepository.save(member);
+        return true;
+    }
+
+    @Override
+    public boolean updatePassword(String userId, String password) {
+        Optional<Member> optionalMember = memberRepository.findById(userId);
+        if(!optionalMember.isPresent()){
+            throw new UsernameNotFoundException("No such a user");
+        }
+
+        Member member = optionalMember.get();
+        String encPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+        member.setPassword(encPassword);
+        memberRepository.save(member);
+        return true;
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -187,8 +228,12 @@ public class MemberServiceImpl implements MemberService{
         }
         Member member = optionalMember.get();
 
-        if(!member.isEmailAuthYn()){
+        if(Member.MEMBER_STATUS_REQ.equals(member.getUserStatus())){
             throw new MemberNotEmailAuthException("Please login after email activation.");
+        }
+
+        if(Member.MEMBER_STATUS_STOP.equals(member.getUserStatus())){
+            throw new MemberStopUserException("Suspended member.");
         }
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();

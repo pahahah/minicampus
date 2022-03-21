@@ -6,6 +6,7 @@ import lombok.Data;
 public class MemberParam {
     String searchType;
     String searchValue;
+    String userId;
 
     long pageIndex;
     long pageSize;

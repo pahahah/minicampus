@@ -29,6 +29,7 @@ public class MemberDto {
 
     boolean adminYn;
 
+    String userStatus;
 
     long totalCount;
     long seq;
@@ -45,6 +46,7 @@ public class MemberDto {
                 .resetPasswordKey(member.getResetPasswordKey())
                 .resetPasswordLimitDt(member.getResetPasswordLimitDt())
                 .adminYn(member.isAdminYn())
+                .userStatus(member.getUserStatus())
                 .build();
     }
 }
