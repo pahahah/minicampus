@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>admin page</title>
+    <style>
+        .list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .list table th, .list table td {
+            border:solid 1px #000;
+        }
+
+        .search-form {
+            position: relative;
+            padding: 5px 0 10px 0;
+            text-align: right;
+        }
+        .search-form .total-count {
+            position: absolute;
+            left: 0; top: 0;
+            height: 20px;
+            float: left;
+        }
+
+        .pager {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pager a.on {
+            font-weight: bold;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>admin member manage</h1>
+    <div th:replace="/fragments/layout.html :: fragment-admin-body-menu"></div>
+    <div class="list">
+
+        <div class="search-form">
+            <p class="total-count">전체 <span th:text="${totalCount}"></span>개</p>
+
+            <form method="get">
+                <select name="searchType">
+                    <option value="all">total</option>
+                    <option th:selected="${#strings.equals(param.searchType, 'userId')}" value="userId">Id(Email)</option>
+                    <option th:selected="${#strings.equals(param.searchType, 'userName')}" value="userName">Name</option>
+                    <option th:selected="${#strings.equals(param.searchType, 'phone')}" value="phone">Phone</option>
+                </select>
+                <input th:value="${param.searchValue}" type="search" name="searchValue" placeholder="enter a search term"/>
+                <button type="submit">search</button>
+            </form>
+        </div>
+        <table>
+            <thead>
+            <tr>
+                <th>NO</th>
+                <th>
+                    ID(Email)
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    phone
+                </th>
+                <th>
+                    Email Auth Yn
+                </th>
+                <th>
+                    reg Date
+                </th>
+                <th>
+                    admin Yn
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="x : ${list}">
+                <td th:text="${x.seq}">1</td>
+                <td>
+                    <a th:text="${x.userId}"
+                       th:href="${'detail.do?userId=' + x.userId}">
+                        example@gmail.com</a>
+                </td>
+                <td th:text="${x.userName}">Max</td>
+                <td th:text="${x.phone}">0000-1111-2222</td>
+                <td>
+                    <p th:if="${x.emailAuthYn}">Y</p>
+                    <p th:if="${x.emailAuthYn eq false}">N</p>
+                </td>
+                <td>
+                    <p th:text="${x.regDt}">2022.01.01</p>
+                </td>
+                <td>
+                    <p th:if="${x.adminYn}">Y</p>
+                    <p th:if="${x.adminYn eq false}">N</p>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+
+        <div class="pager" th:utext="${pager}">
+        </div>
+
+
+    </div>
+
+</body>
+</html>

@@ -1,5 +1,8 @@
 package com.example.hellowebsite.member.service;
 
+import com.example.hellowebsite.admin.dto.MemberDto;
+import com.example.hellowebsite.admin.mapper.MemberMapper;
+import com.example.hellowebsite.admin.model.MemberParam;
 import com.example.hellowebsite.components.MailComponents;
 import com.example.hellowebsite.member.MemberNotEmailAuthException;
 import com.example.hellowebsite.member.entity.Email;
@@ -16,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,6 +33,8 @@ public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
     private final EmailRepository emailRepository;
     private final MailComponents mailComponents;
+
+    private final MemberMapper memberMapper;
 
     @Override
     public boolean register(MemberInput parameter) {
@@ -74,6 +80,7 @@ public class MemberServiceImpl implements MemberService{
             return false;
         }
         Member member = optionalMember.get();
+
         if (member.isEmailAuthYn()) {
             return false;
         }
@@ -112,6 +119,7 @@ public class MemberServiceImpl implements MemberService{
 
         return true;
     }
+
 
     @Override
     public boolean resetPassword(String uuid, String password) {
@@ -153,6 +161,23 @@ public class MemberServiceImpl implements MemberService{
         return true;
     }
 
+    @Override
+    public List<MemberDto> list(MemberParam parameter) {
+
+        long totalCount = memberMapper.selectListCount(parameter);
+        List<MemberDto> list = memberMapper.selectList(parameter);
+        if (!CollectionUtils.isEmpty(list)) {
+            int i = 0;
+            for(MemberDto x : list) {
+                x.setTotalCount(totalCount);
+                x.setSeq(totalCount - parameter.getPageStart() - i);
+                i++;
+            }
+        }
+
+        return list;
+    }
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -169,6 +194,9 @@ public class MemberServiceImpl implements MemberService{
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
+        if (member.isAdminYn()){
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        }
         return new User(member.getUserId(), member.getPassword(), grantedAuthorities);
     }
 }

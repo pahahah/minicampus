@@ -1,8 +1,13 @@
 package com.example.hellowebsite.member.service;
 
+import com.example.hellowebsite.admin.dto.MemberDto;
+import com.example.hellowebsite.admin.model.MemberParam;
+import com.example.hellowebsite.member.entity.Member;
 import com.example.hellowebsite.member.model.MemberInput;
 import com.example.hellowebsite.member.model.ResetPasswordRequest;
 import org.springframework.security.core.userdetails.UserDetailsService;
+
+import java.util.List;
 
 
 public interface MemberService extends UserDetailsService {
@@ -31,9 +36,15 @@ public interface MemberService extends UserDetailsService {
     boolean resetPassword(String id, String password);
 
     /**
-     * Check if the input uuid value is valid.
+     *
      * @param uuid
-     * @return
+     * @return Check if the input uuid value is valid.
      */
     boolean checkResetPassword(String uuid);
+
+    /**
+     *
+     * @return Member list (only in admin)
+     */
+    List<MemberDto> list(MemberParam parameter);
 }
