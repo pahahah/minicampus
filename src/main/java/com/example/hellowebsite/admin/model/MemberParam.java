@@ -29,4 +29,18 @@ public class MemberParam {
         }
     }
 
+    public String getQueryString() {
+        init();
+        StringBuilder sb = new StringBuilder();
+        if (searchType != null && searchType.length() > 0){
+            sb.append(String.format("searchType=%s", searchType));
+        }
+        if(searchValue != null && searchValue.length() > 0){
+            if (sb.length() > 0){
+                sb.append("&");
+            }
+            sb.append(String.format("searchValue=%s", searchValue));
+        }
+        return sb.toString();
+    }
 }

@@ -2,7 +2,6 @@ package com.example.hellowebsite.admin.controller;
 
 import com.example.hellowebsite.admin.dto.MemberDto;
 import com.example.hellowebsite.admin.model.MemberParam;
-import com.example.hellowebsite.member.entity.Member;
 import com.example.hellowebsite.member.service.MemberService;
 import com.example.hellowebsite.util.PageUtil;
 import lombok.RequiredArgsConstructor;
@@ -21,15 +20,16 @@ public class AdminMemberController {
     public String list(Model model, MemberParam parameter) {
         parameter.init();
         List<MemberDto> members = memberService.list(parameter);
-        model.addAttribute("list", members);
+
 
         long totalCount = 0;
         if(members != null && members.size() > 0){
             totalCount = members.get(0).getTotalCount();
         }
-        String queryString = "";
+        String queryString = parameter.getQueryString();
 
         PageUtil pageUtil = new PageUtil(totalCount, parameter.getPageIndex(), queryString);
+        model.addAttribute("list", members);
         model.addAttribute("pager", pageUtil.pager());
         model.addAttribute("totalCount", totalCount);
         return "admin/member/list";
