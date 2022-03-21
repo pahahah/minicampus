@@ -31,7 +31,7 @@ public class AdminMemberController {
 
         PageUtil pageUtil = new PageUtil(totalCount, parameter.getPageIndex(), queryString);
         model.addAttribute("pager", pageUtil.pager());
-
+        model.addAttribute("totalCount", totalCount);
         return "admin/member/list";
     }
 
